@@ -14,6 +14,45 @@ server instead of exposing them in browser code.
 
 ---
 
+## Challenge vertical
+
+**Urban Air Quality Assistant — families and communities in India**
+
+The solution targets residents who need practical decisions around commuting,
+ventilation, outdoor exercise, indoor air protection, cooking, and household
+spending during severe smog.
+
+## Approach and logic
+
+The app separates live-data collection, AQI interpretation, advisory generation,
+and fallback behavior:
+
+1. It resolves a location from an offline Indian city dataset, OpenWeatherMap
+   geocoding, or browser geolocation.
+2. It requests current weather, air composition, and a 96-hour pollution forecast.
+3. A CPCB breakpoint engine estimates pollutant sub-indices and identifies the
+   dominant pollutant.
+4. It combines the live context with household size, commute mode, cooking fuel,
+   home type, budget, and goal.
+5. Gemini converts that context into a validated JSON action plan with estimated
+   exposure avoidance, PM2.5 reduction, CO₂e savings, and cost.
+6. When a provider or live feed is unavailable, a deterministic rules engine or
+   clearly labelled synthetic-data fallback keeps the interface usable.
+
+## Assumptions and responsible-use caveats
+
+- The CPCB breakpoints are statutory for averaging periods; the live feed reports
+  model values for shorter or different periods. The app therefore presents an
+  **estimate**, not an official station reading.
+- CO₂e, pollution exposure avoided, PM2.5 reduction, and rupee-cost values are
+  engineering estimates based on published or representative factors.
+- The action plan is informational. Official CPCB/SAFAR advisories and professional
+  medical guidance should take priority.
+- Gemini and OpenWeatherMap availability, quotas, and network access can affect live
+  recommendations and feeds.
+
+---
+
 ## Features
 
 - **CPCB National AQI engine** — pollutant concentrations are converted with the
