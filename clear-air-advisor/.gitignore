@@ -1,0 +1,24 @@
+# OS and editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*~
+.idea/
+.vscode/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Local experiments (the app itself is dependency-free)
+node_modules/
+*.tmp
+
+# Local provider credentials
+.env
+.env.*
+!.env.example
+.vercel/
+
+.vercel

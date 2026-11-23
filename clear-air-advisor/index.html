@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Clear Air Advisor — a GenAI assistant that helps families and communities across India navigate winter smog and urban air pollution with location-aware routines, indoor air measures and sustainable alternatives.">
+<title>Clear Air Advisor — Urban Air Quality Assistant for India</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231f5c45' stroke-width='2'%3E%3Cpath d='M3 8h11a3 3 0 1 0-3-3M3 12h16a3 3 0 1 1-3 3M3 16h8a3 3 0 1 1-3 3'/%3E%3C/svg%3E">
+</head>
+<body>
+
+<a class="skip-link" href="#conditions">Skip to air quality data</a>
+
+<!-- ============ MASTHEAD ============ -->
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="masthead-brand">
+      <p class="overline">GenAI Urban Air Quality Assistant · PromptWars Challenge 6</p>
+      <h1>Clear Air Advisor</h1>
+      <p class="masthead-tagline">Practical guidance for families and communities navigating winter smog across India</p>
+    </div>
+    <div class="masthead-side">
+      <p class="masthead-date" id="masthead-date"></p>
+      <button type="button" class="btn btn-ghost btn-small" id="btn-settings">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.01a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.01a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.01a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        API setup
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ============ LOCATION BAR ============ -->
+<nav class="location-bar" aria-label="Location selection">
+  <div class="location-bar-inner">
+    <div class="location-search" role="search">
+      <label class="field-label" for="city-input">Your town or city</label>
+      <div class="combobox" id="combobox">
+        <svg class="icon combobox-pin" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <input type="text" id="city-input" autocomplete="off" placeholder="Search a city — e.g. Lucknow, Patna, Guwahati" aria-expanded="false" aria-controls="city-listbox" role="combobox">
+        <ul class="combobox-list" id="city-listbox" role="listbox" hidden></ul>
+      </div>
+    </div>
+    <div class="location-actions">
+      <button type="button" class="btn btn-ghost" id="btn-geolocate">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+        Use my location
+      </button>
+    </div>
+  </div>
+</nav>
+
+<main>
+
+<!-- ============ LIVE CONDITIONS ============ -->
+<section class="section" id="conditions" aria-labelledby="conditions-heading">
+  <div class="section-head">
+    <p class="overline">Section 1</p>
+    <h2 id="conditions-heading">Current air and weather</h2>
+  </div>
+
+  <div class="status-grid" id="status-grid">
+
+    <div class="panel aqi-hero" id="aqi-hero">
+      <div class="aqi-hero-top">
+        <p class="overline" id="aqi-place-line">Waiting for a location</p>
+        <span class="chip" id="ai-chip" hidden></span>
+      </div>
+      <div class="aqi-hero-main">
+        <div class="aqi-number-block">
+          <p class="aqi-value" id="aqi-value">—</p>
+          <p class="aqi-scale-note">CPCB-style index, 0–500, worst pollutant basis</p>
+        </div>
+        <div class="aqi-category-block">
+          <span class="aqi-dot" id="aqi-dot"></span>
+          <p class="aqi-category" id="aqi-category">Awaiting data</p>
+          <p class="aqi-summary" id="aqi-summary">Choose a location above to load live conditions.</p>
+        </div>
+      </div>
+      <p class="health-bulletin" id="health-bulletin" hidden></p>
+    </div>
+
+    <div class="panel weather-panel">
+      <p class="overline">Weather right now</p>
+      <div class="weather-stats" id="weather-stats">
+        <div class="wstat">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v1M12 21v1M4.2 4.2l.7.7M19.1 19.1l.7.7M2 12h1M21 12h1M4.2 19.8l.7-.7M19.1 4.9l.7-.7"/><circle cx="12" cy="12" r="5"/></svg>
+          <div><p class="wstat-value" id="w-temp">—</p><p class="wstat-label">Temperature</p></div>
+        </div>
+        <div class="wstat">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.7s6 6.3 6 11.3a6 6 0 0 1-12 0c0-5 6-11.3 6-11.3z"/></svg>
+          <div><p class="wstat-value" id="w-humidity">—</p><p class="wstat-label">Humidity</p></div>
+        </div>
+        <div class="wstat">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8h11a3 3 0 1 0-3-3M3 12h16a3 3 0 1 1-3 3M3 16h8a3 3 0 1 1-3 3"/></svg>
+          <div><p class="wstat-value" id="w-wind">—</p><p class="wstat-label">Wind</p></div>
+        </div>
+        <div class="wstat">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 14h7l-2 8 9-12h-7l2-8z"/></svg>
+          <div><p class="wstat-value" id="w-condition">—</p><p class="wstat-label">Sky</p></div>
+        </div>
+      </div>
+      <p class="data-note" id="conditions-note"></p>
+    </div>
+  </div>
+
+  <div class="panel pollutant-panel">
+    <div class="panel-head">
+      <p class="overline">Pollutant breakdown</p>
+      <p class="panel-head-note">Concentrations in µg/m³ against WHO 24-hour reference levels</p>
+    </div>
+    <div class="pollutant-grid" id="pollutant-grid">
+      <!-- bars rendered by js/aqi.js -->
+    </div>
+  </div>
+</section>
+
+<!-- ============ OUTLOOK ============ -->
+<section class="section" id="outlook" aria-labelledby="outlook-heading">
+  <div class="section-head">
+    <p class="overline">Section 2</p>
+    <h2 id="outlook-heading">Smog outlook, next 48 hours</h2>
+  </div>
+
+  <div class="panel outlook-panel">
+    <div class="panel-head">
+      <p class="overline">Hourly trajectory</p>
+      <p class="panel-head-note" id="outlook-window-note"></p>
+    </div>
+    <figure class="forecast-figure">
+      <div id="forecast-chart" class="forecast-chart" role="img" aria-label="Line chart of forecast air quality index for the next 48 hours"></div>
+      <figcaption class="figure-caption" id="forecast-caption"></figcaption>
+    </figure>
+    <div class="outlook-summary" id="outlook-summary">
+      <div class="outlook-item">
+        <p class="overline">Cleanest window</p>
+        <p class="outlook-value" id="outlook-best">—</p>
+        <p class="outlook-note" id="outlook-best-note">Best hours to ventilate rooms, air bedding or exercise outdoors.</p>
+      </div>
+      <div class="outlook-item">
+        <p class="overline">Worst stretch</p>
+        <p class="outlook-value" id="outlook-worst">—</p>
+        <p class="outlook-note" id="outlook-worst-note">Keep windows shut and plan indoor alternatives then.</p>
+      </div>
+      <div class="outlook-item">
+        <p class="overline">Four-day trend</p>
+        <p class="outlook-value" id="outlook-trend">—</p>
+        <p class="outlook-note" id="outlook-trend-note"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PROFILE ============ -->
+<section class="section" id="profile" aria-labelledby="profile-heading">
+  <div class="section-head">
+    <p class="overline">Section 3</p>
+    <h2 id="profile-heading">Your household</h2>
+    <p class="section-intro">Answers shape every recommendation: school-age children change school-run advice, a low budget changes which air purifiers are suggested, and commute mode decides which swaps are realistic.</p>
+  </div>
+
+  <form class="panel profile-form" id="profile-form" autocomplete="off">
+    <fieldset class="profile-fieldset">
+      <legend class="overline">Household members</legend>
+      <div class="chips-field" data-field="members" role="group" aria-label="Household members">
+        <label class="check-chip"><input type="checkbox" name="members" value="children"> Children under 12</label>
+        <label class="check-chip"><input type="checkbox" name="members" value="elderly"> Adults over 60</label>
+        <label class="check-chip"><input type="checkbox" name="members" value="respiratory"> Asthma or COPD</label>
+        <label class="check-chip"><input type="checkbox" name="members" value="cardiac"> Heart condition</label>
+        <label class="check-chip"><input type="checkbox" name="members" value="pregnant"> Pregnancy</label>
+        <label class="check-chip"><input type="checkbox" name="members" value="pets"> Indoor pets</label>
+      </div>
+    </fieldset>
+
+    <fieldset class="profile-fieldset">
+      <legend class="overline">Daily routine</legend>
+      <div class="select-row">
+        <div class="field">
+          <label class="field-label" for="f-commute">Main commute</label>
+          <select id="f-commute" name="commute">
+            <option value="two-wheeler">Two-wheeler (petrol)</option>
+            <option value="car">Private car (petrol/diesel)</option>
+            <option value="public">Bus or metro</option>
+            <option value="walk-cycle">Walking or cycling</option>
+            <option value="wfh">Work or study from home</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label" for="f-cooking">Cooking fuel</label>
+          <select id="f-cooking" name="cooking">
+            <option value="lpg">LPG or piped gas</option>
+            <option value="induction">Electric or induction</option>
+            <option value="wood">Wood, coal or biomass</option>
+            <option value="mixed">Mixed fuels</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label" for="f-home">Home</label>
+          <select id="f-home" name="home">
+            <option value="apartment">Apartment in a block</option>
+            <option value="independent">Independent house</option>
+            <option value="roadside">Room facing a main road</option>
+          </select>
+        </div>
+      </div>
+      <div class="select-row">
+        <div class="field">
+          <label class="field-label" for="f-budget">Budget for changes</label>
+          <select id="f-budget" name="budget">
+            <option value="low">Under ₹2,000</option>
+            <option value="medium">₹2,000 – ₹15,000</option>
+            <option value="high">Above ₹15,000</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label" for="f-goal">Main goal</label>
+          <select id="f-goal" name="goal">
+            <option value="exposure">Protect family health</option>
+            <option value="emissions">Cut our emissions</option>
+            <option value="both">Both health and emissions</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label" for="f-hours">Hours outdoors on a workday</label>
+          <select id="f-hours" name="hours">
+            <option value="short">Under 1 hour</option>
+            <option value="medium">1–3 hours</option>
+            <option value="long">More than 3 hours</option>
+          </select>
+        </div>
+      </div>
+    </fieldset>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary" id="btn-plan">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h14a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM9 8h6M9 12h6M9 16h4"/></svg>
+        Generate my action plan
+      </button>
+      <p class="form-note" id="plan-note">Uses live air data, the 48-hour outlook and your profile. Provider API keys are read securely by the server.</p>
+    </div>
+  </form>
+</section>
+
+<!-- ============ ACTION PLAN ============ -->
+<section class="section" id="plan" aria-labelledby="plan-heading">
+  <div class="section-head section-head-row">
+    <div>
+      <p class="overline">Section 4</p>
+      <h2 id="plan-heading">Your action plan</h2>
+    </div>
+    <div class="section-head-actions">
+      <span class="chip" id="plan-mode-chip" hidden></span>
+      <button type="button" class="btn btn-ghost btn-small" id="btn-print" hidden>
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>
+        Print
+      </button>
+      <button type="button" class="btn btn-ghost btn-small" id="btn-copy" hidden>
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy text
+      </button>
+    </div>
+  </div>
+
+  <div class="plan-empty panel" id="plan-empty">
+    <p>Load a location, answer the household questions, then press <strong>Generate my action plan</strong>. The plan arrives as three parts — a low-emission daily routine, indoor air measures, and sustainable alternatives — each with the direct impact of the choice.</p>
+  </div>
+
+  <div class="plan-body" id="plan-body" hidden>
+    <div class="panel plan-summary" id="plan-summary"></div>
+    <div id="plan-sections"><!-- rendered by js/advisor.js --></div>
+  </div>
+</section>
+
+<!-- ============ FOLLOW-UP CHAT ============ -->
+<section class="section" id="ask" aria-labelledby="ask-heading">
+  <div class="section-head">
+    <p class="overline">Section 5</p>
+    <h2 id="ask-heading">Ask a follow-up question</h2>
+    <p class="section-intro">The advisor already knows your location, live air data and household profile. Ask about today specifically — school timing, an evening event, ventilation, masks, travel.</p>
+  </div>
+
+  <div class="panel chat-panel">
+    <div class="chat-log" id="chat-log" aria-live="polite">
+      <div class="chat-msg chat-assistant">
+        <p class="chat-who">Advisor</p>
+        <p>Load your city first, then ask anything about today's air — for example, "should my father take his morning walk now or later?"</p>
+      </div>
+    </div>
+    <form class="chat-form" id="chat-form">
+      <input type="text" id="chat-input" placeholder="Ask about today's air in your city…" aria-label="Your question">
+      <button type="submit" class="btn btn-primary" id="btn-chat">Ask</button>
+    </form>
+    <p class="form-note" id="chat-note">Answers are general guidance, not medical advice.</p>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-col">
+      <p class="overline">Data sources</p>
+      <p>Live weather, air composition and 48-hour pollution forecasts from OpenWeatherMap. CPCB-style index derived from PM2.5 using Central Pollution Control Board sub-index breakpoints.</p>
+    </div>
+    <div class="footer-col">
+      <p class="overline">Method</p>
+      <p>Recommendations combine statutory AQI guidance with emission-factor arithmetic. Quantified impacts are engineering estimates from published averages, stated so you can judge them, not lab measurements of your home.</p>
+    </div>
+    <div class="footer-col">
+      <p class="overline">Limits</p>
+      <p>General information for a hackathon demonstration, not medical, regulatory or legal advice. For health decisions during severe episodes, follow your doctor and official CPCB / SAFAR bulletins.</p>
+    </div>
+  </div>
+  <p class="footer-base">Clear Air Advisor — built for the PromptWars GenAI Challenge, urban winter smog season, India.</p>
+</footer>
+
+<!-- ============ API SETUP DIALOG ============ -->
+<dialog class="settings-dialog" id="settings-dialog">
+  <div class="settings-head">
+    <h2>API setup</h2>
+    <button type="button" class="btn btn-ghost btn-small" id="btn-settings-close">Close</button>
+  </div>
+  <p class="settings-note">Provider credentials are kept on the server and are never entered into this page. For local development, set GEMINI_API_KEY and OPENWEATHER_API_KEY in .env.local, then run scripts/dev.ps1 in PowerShell. For a deployment, add them as Secrets in the Vercel project settings.</p>
+</dialog>
+
+<script src="js/config.js"></script>
+<script src="js/cities.js"></script>
+<script src="js/aqi.js"></script>
+<script src="js/api.js"></script>
+<script src="js/advisor.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
